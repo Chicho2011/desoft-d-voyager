@@ -1,0 +1,69 @@
+<?php
+
+namespace Desoft\DVoyager;
+
+use Desoft\DVoyager\Rules\CustomUrlRule;
+use Desoft\DVoyager\Rules\ValidationNameRule;
+use Desoft\DVoyager\Rules\ValidationPhoneRule;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\ServiceProvider;
+
+class DVoyagerServiceProvider extends ServiceProvider
+{
+    public function boot(){
+
+        $this->loadTranslationsFrom(dirname(__DIR__).'/lang', 'dvoyager');
+        $this->loadViewsFrom(__DIR__.'/../views', 'dvoyager');
+
+        $this->publishes([
+            dirname(__DIR__).'/publishable/config/dvoyager.php' => config_path('dvoyager.php'),
+            dirname(__DIR__).'/lang' => $this->app->langPath('vendor/dvoyager'),
+            __DIR__.'/../views' => base_path('resources/views/vendor/dvoyager')
+        ]);
+
+        $this->registerValidation();
+
+    }
+
+    public function register(){}
+
+    private function registerValidation()
+    {
+        Validator::extend('validation_phone', function($attribute, $value, $parameters, $validator){
+            $customRule = null;
+            if(count($parameters) == 0)
+            {
+                $customRule = new ValidationPhoneRule();
+            }
+            else{
+                $customRule = new ValidationPhoneRule($parameters[0], $parameters[1] ?? null);
+            }
+
+            $validator->addReplacer('validation_phone', function($message, $attribute, $rule, $parameters) use ($customRule) {
+                return $customRule->message();
+            });
+
+            return $customRule->passes($attribute, $value);
+        });
+
+        Validator::extend('custom_url', function($attribute, $value, $parameters, $validator){
+            $customRule = new CustomUrlRule();
+
+            $validator->addReplacer('custom_url', function($message, $attribute, $rule, $parameters) use ($customRule) {
+                return $customRule->message();
+            });
+
+            return $customRule->passes($attribute, $value);
+        });
+
+        Validator::extend('validation_name', function($attribute, $value, $parameters, $validator){
+            $customRule = new ValidationNameRule();
+
+            $validator->addReplacer('validation_name', function($message, $attribute, $rule, $parameters) use ($customRule) {
+                return $customRule->message();
+            });
+
+            return $customRule->passes($attribute, $value);
+        });
+    }
+}

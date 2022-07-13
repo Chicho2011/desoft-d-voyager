@@ -1,0 +1,13 @@
+<?php
+
+namespace {{ namespace }};
+
+use Desoft\DVoyager\Models\DVoyagerModel;
+
+class {{ className }} extends DVoyagerModel {
+
+    protected $table = '{{ table }}';
+    protected $slugFrom = '{{ slugFrom }}';
+    protected $translatable = '{{ translatable }}';
+
+}

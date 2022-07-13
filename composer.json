@@ -1,0 +1,26 @@
+{
+    "name": "desoft/d-voyager",
+    "description": "BREAD generator and multiple funcionality for voyager installation",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Desoft\\DVoyager\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Ernesto Alvarez",
+            "email": "alvarez93lopez@gmail.com"
+        }
+    ],
+    "require": {
+        "spatie/laravel-sluggable": "^3.4"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Desoft\\DVoyager\\DVoyagerServiceProvider"
+            ]
+        }
+    }
+}
