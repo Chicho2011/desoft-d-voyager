@@ -3,6 +3,7 @@
 namespace Desoft\DVoyager;
 
 use Desoft\DVoyager\Commands\InstallCommand;
+use Desoft\DVoyager\Commands\MinInstallCommand;
 use Desoft\DVoyager\Rules\CustomUrlRule;
 use Desoft\DVoyager\Rules\ValidationNameRule;
 use Desoft\DVoyager\Rules\ValidationPhoneRule;
@@ -27,7 +28,8 @@ class DVoyagerServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->commands([
-                InstallCommand::class
+                InstallCommand::class,
+                MinInstallCommand::class
             ]);
         }
 
