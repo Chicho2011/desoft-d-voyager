@@ -39,11 +39,13 @@ class Generator {
     public function generateClass()
     {
         foreach ($this->breads as $key => $value) {
+            $info = $value['info'] ?? [];
             $this->classGeneratorServices->generateDVoyagerClass(
                 name: $key, 
                 table: $value['table'], 
                 slugFrom: array_key_exists('slugFrom', $value) ? $value['slugFrom'] : 'title', 
-                fieldsTranslatables: array_key_exists('fieldsTranslatable', $value) ? $value['fieldsTranslatable'] : '[]'
+                fieldsTranslatables: array_key_exists('fieldsTranslatable', $value) ? $value['fieldsTranslatable'] : '[]',
+                fieldsInfo: json_encode($info)
             );
         }
     }

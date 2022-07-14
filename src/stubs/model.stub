@@ -8,6 +8,6 @@ class {{ className }} extends DVoyagerModel {
 
     protected $table = '{{ table }}';
     protected $slugFrom = '{{ slugFrom }}';
-    protected $translatable = '{{ translatable }}';
-
+    protected $translatable = {{ translatable }};
+    protected $fieldsInfo = '{{ fieldsInfo }}';
 }

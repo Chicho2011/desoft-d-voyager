@@ -15,11 +15,11 @@ class ClassGeneratorServices {
         $this->modelsPath = base_path('app/Models');
     }
 
-    public function generateDVoyagerClass(string $name, string $table, string $slugFrom = 'title', string $fieldsTranslatables = '[]')
+    public function generateDVoyagerClass(string $name, string $table, string $slugFrom = 'title', string $fieldsTranslatables = '[]', string $fieldsInfo = '[]')
     {
         $capitalizeName = ucfirst($name);
         $newClassPath = $this->modelsPath.'/'.$this->folderName.'/'.$capitalizeName.'DVoyagerModel.php';
-        $body = $this->generateClassBody(capitalizeName: $capitalizeName.'DVoyagerModel', table: $table, slugFrom: $slugFrom, fieldsTranslatables: $fieldsTranslatables, path: $newClassPath);
+        $body = $this->generateClassBody(capitalizeName: $capitalizeName.'DVoyagerModel', table: $table, slugFrom: $slugFrom, fieldsTranslatables: $fieldsTranslatables, path: $newClassPath, fieldsInfo: $fieldsInfo);
 
         if(!is_dir($this->modelsPath.'/'.$this->folderName))
         {
@@ -34,7 +34,13 @@ class ClassGeneratorServices {
         GeneratorUtilities::createFile(path: $newClassPath, body: $body);
     }
 
-    private function generateClassBody(string $capitalizeName, string $table, string $slugFrom = 'title', string $fieldsTranslatables = '[]', string $path)
+    private function generateClassBody(string $capitalizeName, 
+                                       string $table, 
+                                       string $slugFrom = 'title', 
+                                       string $fieldsTranslatables = '[]', 
+                                       string $path,
+                                       string $fieldsInfo = '[]',
+                                       )
     {
         $namespace = "App\Models\\".$this->folderName;
 
@@ -45,8 +51,8 @@ class ClassGeneratorServices {
         $tableReplaces = str_replace('{{ table }}', $table, $classReplaces);
         $slugFromReplaces = str_replace('{{ slugFrom }}', $slugFrom, $tableReplaces);
         $fieldsTranslatablesReplaces = str_replace('{{ translatable }}', $fieldsTranslatables, $slugFromReplaces);
+        $fieldsInfoReplaces = str_replace('{{ fieldsInfo }}', $fieldsInfo, $fieldsTranslatablesReplaces);
 
-        return $fieldsTranslatablesReplaces;
+        return $fieldsInfoReplaces;
     }
-
 }
