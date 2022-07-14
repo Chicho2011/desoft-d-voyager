@@ -2,6 +2,7 @@
 
 namespace Desoft\DVoyager\Http\Controllers;
 
+use Desoft\DVoyager\Events\UserAuth;
 use TCG\Voyager\Http\Controllers\VoyagerController as BaseVoyagerController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,6 +15,15 @@ use TCG\Voyager\Facades\Voyager;
 
 class VoyagerController extends BaseVoyagerController
 {
+ 
+    public function logout()
+    {
+        event(new UserAuth(Auth::user()->name, false));
+        Auth::logout();
+
+        return redirect()->route('voyager.login');
+    }
+
     public function dAssets(Request $request)
     {
         try {

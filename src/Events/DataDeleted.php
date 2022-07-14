@@ -14,6 +14,7 @@ class DataDeleted
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    public string $action = 'Borró';
     /**
      * Create a new event instance.
      *
@@ -22,7 +23,6 @@ class DataDeleted
     public function __construct(
         public string $user,
         public array $ids,
-        public string $action = 'Borró',
         public string $table
     )
     {

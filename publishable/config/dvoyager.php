@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'act_date_format' => 'd.m.Y',
     'breads' => [
         'news' => [
             'table' => 'news',

@@ -2,6 +2,7 @@
 
 namespace Desoft\DVoyager\Listeners;
 
+use Desoft\DVoyager\Enums\Constants;
 use Desoft\DVoyager\Events\UserAuth;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -29,7 +30,7 @@ class SaveAuthTrace
     {
         $trace = new DVoyagerTrace();
         $trace->user = $event->user;
-        $trace->action = $event->logIn ? 'Inició Sesión' : 'Cerró Sesión';
+        $trace->action = $event->logIn ? Constants::USER_AUTH_TRACE['USER_LOGIN'] : Constants::USER_AUTH_TRACE['USER_LOGOUT'];
 
         $trace->save();
     }
