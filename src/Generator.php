@@ -29,10 +29,17 @@ class Generator {
 
     public function install()
     {
+        $this->executeCommonMigrateCommand();
         $this->generateClass();
         $this->generateMigration();
         $this->executeMigrateCommand();
         $this->generateBreads();
+        $this->changeVoyagerControllers();
+    }
+
+    public function minimumInstall()
+    {
+        $this->executeCommonMigrateCommand();
         $this->changeVoyagerControllers();
     }
 
@@ -71,6 +78,11 @@ class Generator {
         Artisan::call('migrate', [
             '--path' => '/database/migrations/DVoyager'
         ]);
+    }
+
+    public function executeCommonMigrateCommand()
+    {
+        Artisan::call('migrate');
     }
 
     public function changeVoyagerControllers()

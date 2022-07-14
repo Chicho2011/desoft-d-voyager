@@ -17,6 +17,7 @@ class DVoyagerServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__.'/../views', 'dvoyager');
         $this->loadRoutesFrom(__DIR__.'/../routes/dvoyager.php');
         $this->loadHelpers();
+        $this->loadMigrationsFrom(__DIR__.'/../migrations');
 
         $this->publishes([
             dirname(__DIR__).'/publishable/config/dvoyager.php' => config_path('dvoyager.php'),
