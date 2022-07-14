@@ -2,6 +2,7 @@
 
 namespace Desoft\DVoyager;
 
+use Desoft\DVoyager\Commands\InstallCommand;
 use Desoft\DVoyager\Rules\CustomUrlRule;
 use Desoft\DVoyager\Rules\ValidationNameRule;
 use Desoft\DVoyager\Rules\ValidationPhoneRule;
@@ -22,6 +23,12 @@ class DVoyagerServiceProvider extends ServiceProvider
             dirname(__DIR__).'/lang' => $this->app->langPath('vendor/dvoyager'),
             __DIR__.'/../views' => base_path('resources/views/vendor/dvoyager')
         ]);
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                InstallCommand::class
+            ]);
+        }
 
         $this->registerValidation();
 

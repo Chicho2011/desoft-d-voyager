@@ -40,11 +40,12 @@ class Generator {
     {
         foreach ($this->breads as $key => $value) {
             $info = $value['info'] ?? [];
+            //TODO Revisar el tema de los translatables
             $this->classGeneratorServices->generateDVoyagerClass(
                 name: $key, 
                 table: $value['table'], 
                 slugFrom: array_key_exists('slugFrom', $value) ? $value['slugFrom'] : 'title', 
-                fieldsTranslatables: array_key_exists('fieldsTranslatable', $value) ? $value['fieldsTranslatable'] : '[]',
+                fieldsTranslatables: array_key_exists('fieldsTranslatable', $value) ? implode(',',$value['fieldsTranslatable']) : '',
                 fieldsInfo: json_encode($info)
             );
         }
