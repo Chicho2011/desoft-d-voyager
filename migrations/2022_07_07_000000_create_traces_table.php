@@ -12,9 +12,7 @@ return new class extends Migration
         Schema::create('traces', function (Blueprint $table) {
             $table->id();
             $table->string('user');
-            $table->string('action');
-            $table->string('table');
-            $table->text('fields')->nullable();
+            $table->text('action');
             $table->timestamps();
         });
     }

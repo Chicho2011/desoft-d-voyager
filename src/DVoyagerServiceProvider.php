@@ -4,6 +4,7 @@ namespace Desoft\DVoyager;
 
 use Desoft\DVoyager\Commands\InstallCommand;
 use Desoft\DVoyager\Commands\MinInstallCommand;
+use Desoft\DVoyager\Providers\DVoyagerEventServiceProvider;
 use Desoft\DVoyager\Rules\CustomUrlRule;
 use Desoft\DVoyager\Rules\ValidationNameRule;
 use Desoft\DVoyager\Rules\ValidationPhoneRule;
@@ -37,7 +38,9 @@ class DVoyagerServiceProvider extends ServiceProvider
 
     }
 
-    public function register(){}
+    public function register(){
+        $this->app->register(DVoyagerEventServiceProvider::class);
+    }
 
     private function registerValidation()
     {

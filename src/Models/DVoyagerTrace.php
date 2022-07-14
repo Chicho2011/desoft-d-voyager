@@ -7,5 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 class DVoyagerTrace extends Model
 {
     protected $table = 'traces';
-    protected $fillable = ['user', 'action', 'table', 'fields'];
+    protected $fillable = ['user', 'action'];
 }
