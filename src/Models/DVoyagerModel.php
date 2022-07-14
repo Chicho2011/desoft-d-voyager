@@ -45,11 +45,11 @@ class DVoyagerModel extends Model {
     {
         $currentLocale = App::getLocale();
         $decoded = json_decode($this->fieldsInfo);
-        if(isset($decoded[$currentLocale]))
+        if(isset($decoded->$currentLocale))
         {
-            if(isset($decoded[$currentLocale][$field]))
+            if(isset($decoded->$currentLocale->$field))
             {
-                return $decoded[$currentLocale][$field];
+                return $decoded->$currentLocale->$field;
             }
         }
 

@@ -83,7 +83,9 @@
                                     @else
                                         {!! app('voyager')->formField($row, $dataType, $dataTypeContent) !!}
                                     @endif
-
+                                    @if (app($dataType->model_name)->getFieldInfo($row->field))
+                                        <div class="dv-info">{{app($dataType->model_name)->getFieldInfo($row->field)}}</div>   
+                                    @endif
                                     @foreach (app('voyager')->afterFormFields($row, $dataType, $dataTypeContent) as $after)
                                         {!! $after->handle($row, $dataType, $dataTypeContent) !!}
                                     @endforeach

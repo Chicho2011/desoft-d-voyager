@@ -4,3 +4,8 @@
 .dv-required{
     color: red;
 }
+
+.dv-info{
+    color: #6d6d6d;
+    font-size: 12px;
+}
