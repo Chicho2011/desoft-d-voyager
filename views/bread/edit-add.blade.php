@@ -3,7 +3,7 @@
     $add  = is_null($dataTypeContent->getKey());
 @endphp
 
-@extends('voyager::master')
+@extends('dvoyager::master')
 
 @section('css')
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -39,8 +39,8 @@
                         {{ csrf_field() }}
 
                         <div class="panel-body">
-                            {{-- <p class="alert alert-info"><b>NOTA:</b> Los campos con <span class="required2">*</span> son
-                                    requeridos.</p> --}}
+                            <p class="alert alert-info"><b>NOTA:</b> Los campos con <span class="dv-required">*</span> son
+                                    requeridos.</p>
                             @if (count($errors) > 0)
                                 <div class="alert alert-danger">
                                     <ul>

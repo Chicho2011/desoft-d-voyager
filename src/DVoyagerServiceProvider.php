@@ -14,6 +14,8 @@ class DVoyagerServiceProvider extends ServiceProvider
 
         $this->loadTranslationsFrom(dirname(__DIR__).'/lang', 'dvoyager');
         $this->loadViewsFrom(__DIR__.'/../views', 'dvoyager');
+        $this->loadRoutesFrom(__DIR__.'/../routes/dvoyager.php');
+        $this->loadHelpers();
 
         $this->publishes([
             dirname(__DIR__).'/publishable/config/dvoyager.php' => config_path('dvoyager.php'),
@@ -65,5 +67,12 @@ class DVoyagerServiceProvider extends ServiceProvider
 
             return $customRule->passes($attribute, $value);
         });
+    }
+
+    private function loadHelpers()
+    {
+        foreach (glob(__DIR__.'/Helpers/*.php') as $filename) {
+            require_once $filename;
+        }
     }
 }
