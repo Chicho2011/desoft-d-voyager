@@ -33,6 +33,7 @@ class DVoyagerModel extends Model {
         json
     */
     protected $fieldsInfo = '';
+    protected $searchable = [];
 
     public function getSlugOptions(): SlugOptions {
         return SlugOptions::create()

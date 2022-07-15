@@ -15,11 +15,23 @@ class ClassGeneratorServices {
         $this->modelsPath = base_path('app/Models');
     }
 
-    public function generateDVoyagerClass(string $name, string $table, string $slugFrom = 'title', string $fieldsTranslatables = '[]', string $fieldsInfo = '[]')
+    public function generateDVoyagerClass(string $name, 
+                                          string $table, 
+                                          string $slugFrom = 'title', 
+                                          string $fieldsTranslatables = '', 
+                                          string $fieldsInfo = '[]',
+                                          string $searchable = ''
+                                         )
     {
         $capitalizeName = ucfirst($name);
         $newClassPath = $this->modelsPath.'/'.$this->folderName.'/'.$capitalizeName.'DVoyagerModel.php';
-        $body = $this->generateClassBody(capitalizeName: $capitalizeName.'DVoyagerModel', table: $table, slugFrom: $slugFrom, fieldsTranslatables: $fieldsTranslatables, path: $newClassPath, fieldsInfo: $fieldsInfo);
+        $body = $this->generateClassBody(capitalizeName: $capitalizeName.'DVoyagerModel', 
+                                         table: $table, 
+                                         slugFrom: $slugFrom, 
+                                         fieldsTranslatables: $fieldsTranslatables, 
+                                         fieldsInfo: $fieldsInfo,
+                                         searchable: $searchable
+                                        );
 
         if(!is_dir($this->modelsPath.'/'.$this->folderName))
         {
@@ -37,22 +49,30 @@ class ClassGeneratorServices {
     private function generateClassBody(string $capitalizeName, 
                                        string $table, 
                                        string $slugFrom = 'title', 
-                                       string $fieldsTranslatables = '[]', 
-                                       string $path,
-                                       string $fieldsInfo = '[]',
+                                       string $fieldsTranslatables = '', 
+                                       string $fieldsInfo = '',
+                                       string $searchable = ''
                                        )
     {
         $namespace = "App\Models\\".$this->folderName;
 
         $bodyFromStubs = file_get_contents(__DIR__.'/../stubs/model.stub');
 
-        $namespaceReplaces = str_replace('{{ namespace }}', $namespace, $bodyFromStubs);
-        $classReplaces = str_replace('{{ className }}', $capitalizeName, $namespaceReplaces);
-        $tableReplaces = str_replace('{{ table }}', $table, $classReplaces);
-        $slugFromReplaces = str_replace('{{ slugFrom }}', $slugFrom, $tableReplaces);
-        $fieldsTranslatablesReplaces = str_replace('{{ translatable }}', $fieldsTranslatables, $slugFromReplaces);
-        $fieldsInfoReplaces = str_replace('{{ fieldsInfo }}', $fieldsInfo, $fieldsTranslatablesReplaces);
+        $bodyFromStubs = str_replace('{{ namespace }}', $namespace, $bodyFromStubs);
+        $bodyFromStubs = str_replace('{{ className }}', $capitalizeName, $bodyFromStubs);
+        $bodyFromStubs = str_replace('{{ table }}', $table, $bodyFromStubs);
+        $bodyFromStubs = str_replace('{{ slugFrom }}', $slugFrom, $bodyFromStubs);
+        $bodyFromStubs = str_replace('{{ translatable }}', $fieldsTranslatables != '' ? $fieldsTranslatables : "''", $bodyFromStubs);
+        $bodyFromStubs = str_replace('{{ fieldsInfo }}', $fieldsInfo, $bodyFromStubs);
+        if($searchable != '')
+        {
+            $bodyFromStubs = str_replace('{{ traits }}', 'use \\Desoft\\DVoyager\\Traits\\SearchChanges;', $bodyFromStubs);
+        }
+        else{
+            $bodyFromStubs = str_replace('{{ traits }}', '', $bodyFromStubs);
+        }
+        $bodyFromStubs = str_replace('{{ searchable }}', $searchable != '' ? $searchable : "''", $bodyFromStubs);
 
-        return $fieldsInfoReplaces;
+        return $bodyFromStubs;
     }
 }

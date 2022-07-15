@@ -52,8 +52,9 @@ class Generator {
                 name: $key, 
                 table: $value['table'], 
                 slugFrom: array_key_exists('slugFrom', $value) ? $value['slugFrom'] : 'title', 
-                fieldsTranslatables: array_key_exists('fieldsTranslatable', $value) ? implode(',',$value['fieldsTranslatable']) : '',
-                fieldsInfo: json_encode($info)
+                fieldsTranslatables: array_key_exists('fieldsTranslatable', $value) ? json_encode($value['fieldsTranslatable']) : '',
+                fieldsInfo: json_encode($info),
+                searchable: isset($value['searchable']) ? json_encode($value['searchable']) : ''
             );
         }
     }
