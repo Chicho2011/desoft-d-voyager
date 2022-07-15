@@ -20,16 +20,16 @@ class DVoyagerModel extends Model {
         TODO Revisar si esta es la mejor forma
         Información auxiliar de cada campo para mostrar en el formulario para cada lenguaje
         Formato
-        [
-            'es' => [
-                'title' => 'Información',
-                'from' => 'Otra información'
-            ],
-            'en' => [
-                'title' => 'Information',
-                'from' => 'Another information'
-            ]
-        ]
+        {
+            'es: {
+                'title': 'Información',
+                'from': 'Otra información'
+            },
+            'en': {
+                'title': 'Information',
+                'from': 'Another information'
+            }
+        }
         json
     */
     protected $fieldsInfo = '';
