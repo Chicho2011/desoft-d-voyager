@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class DVoyagerSearch extends Model
 {
     protected $table = 'searches';
-    protected $fillable = ['title', 'content'];
+    protected $fillable = ['content'];
 
     public function searchable()
     {

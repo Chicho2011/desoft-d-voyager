@@ -11,7 +11,7 @@ return new class extends Migration
     {
         Schema::create('searches', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
+            $table->text('content');
             $table->unsignedBigInteger('searchable_id');
             $table->string('searchable_type');
             $table->timestamps();
