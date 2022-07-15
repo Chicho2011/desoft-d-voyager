@@ -15,7 +15,11 @@ use TCG\Voyager\Facades\Voyager;
 
 class VoyagerController extends BaseVoyagerController
 {
- 
+    public function index()
+    {
+        return Voyager::view('dvoyager::index');
+    }
+
     public function logout()
     {
         event(new UserAuth(Auth::user()->name, false));

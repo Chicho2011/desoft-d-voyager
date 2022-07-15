@@ -62,7 +62,7 @@ class ClassGeneratorServices {
         $bodyFromStubs = str_replace('{{ className }}', $capitalizeName, $bodyFromStubs);
         $bodyFromStubs = str_replace('{{ table }}', $table, $bodyFromStubs);
         $bodyFromStubs = str_replace('{{ slugFrom }}', $slugFrom, $bodyFromStubs);
-        $bodyFromStubs = str_replace('{{ translatable }}', $fieldsTranslatables != '' ? $fieldsTranslatables : "''", $bodyFromStubs);
+        $bodyFromStubs = str_replace('{{ translatable }}', $fieldsTranslatables != '' ? $fieldsTranslatables : json_encode([]), $bodyFromStubs);
         $bodyFromStubs = str_replace('{{ fieldsInfo }}', $fieldsInfo, $bodyFromStubs);
         if($searchable != '')
         {
@@ -71,7 +71,7 @@ class ClassGeneratorServices {
         else{
             $bodyFromStubs = str_replace('{{ traits }}', '', $bodyFromStubs);
         }
-        $bodyFromStubs = str_replace('{{ searchable }}', $searchable != '' ? $searchable : "''", $bodyFromStubs);
+        $bodyFromStubs = str_replace('{{ searchable }}', $searchable != '' ? $searchable : json_encode([]), $bodyFromStubs);
 
         return $bodyFromStubs;
     }
