@@ -11,7 +11,9 @@ class MigrationGeneratorServices {
     private $migrationsPath;
     private $folderName;
 
-    function __construct()
+    function __construct(
+        private RelationshipGeneratorServices $relationshipGeneratorServices
+    )
     {
         $this->folderName = 'DVoyager';
         $this->migrationsPath = base_path('database/migrations');
@@ -20,7 +22,7 @@ class MigrationGeneratorServices {
     /*
         $keyValueFields: Array (la llave pertenece al nombre del campo y el value el tipo)
     */
-    public function generateDVoyagerMigration(string $table, array $keyValueFields)
+    public function generateDVoyagerMigration(string $table, array $keyValueFields, array $relationships = [])
     {
         $carbonDate = Carbon::now();
 
@@ -28,7 +30,7 @@ class MigrationGeneratorServices {
         $date_text = $carbonDate->format('Y_m_d_his');
 
         $newMigrationPath = $this->migrationsPath.'/'.$this->folderName.'/'.$date_text.'_create_'.$table.'_table.php';
-        $body = $this->generateBody(table: $table, keyValueFields: $keyValueFields);
+        $body = $this->generateBody(table: $table, keyValueFields: $keyValueFields, relationships: $relationships);
 
         if(!is_dir($this->migrationsPath.'/'.$this->folderName))
         {
@@ -43,7 +45,7 @@ class MigrationGeneratorServices {
         GeneratorUtilities::createFile(path: $newMigrationPath, body: $body);
     }
 
-    private function generateBody(string $table, array $keyValueFields)
+    private function generateBody(string $table, array $keyValueFields, array $relationships = [])
     {
         $fieldsText = "";
 
@@ -66,13 +68,32 @@ class MigrationGeneratorServices {
             $fieldsText .= "\$table->$type('$key')$isNullable$isUnique;\n";
         }
 
+        $fieldsText .= $this->generateMigrationLineFromRelationships($relationships);
+
         $fieldsText .= "\$table->timestamps();\n";
 
         $bodyFromStub = file_get_contents(__DIR__.'/../stubs/migration.stub');
 
-        $tableReplaces = str_replace('{{ table }}', $table, $bodyFromStub);
-        $fieldsReplaces = str_replace('{{ fields }}', $fieldsText, $tableReplaces);
+        $bodyFromStub = str_replace('{{ table }}', $table, $bodyFromStub);
+        $bodyFromStub = str_replace('{{ fields }}', $fieldsText, $bodyFromStub);
 
-        return $fieldsReplaces;
+        return $bodyFromStub;
+    }
+
+    private function generateMigrationLineFromRelationships($relationShipArray)
+    {
+        $text = '';
+        foreach ($relationShipArray as $key => $value) {
+            $fieldName = $key;
+            $fieldType = 'unsignedBigInteger';
+            $relatedTable = app($this->relationshipGeneratorServices->generateClassPath($value['model']))->getTable();
+            $relatedField = isset($value['referencesField']) ? $value['referencesField'] : 'id';
+            $text .= "
+                    \$table->$fieldType('$fieldName');
+                    \$table->foreign('$fieldName')->references('$relatedField')->on('$relatedTable')->onDelete('CASCADE');
+                    ";
+        }
+
+        return $text;
     }
 }

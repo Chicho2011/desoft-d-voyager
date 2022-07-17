@@ -13,4 +13,6 @@ class {{ className }} extends DVoyagerModel {
     protected $translatable = {{ translatable }};
     protected $fieldsInfo = '{{ fieldsInfo }}';
     protected $searchable = {{ searchable }};
+
+    {{ relationships }}
 }

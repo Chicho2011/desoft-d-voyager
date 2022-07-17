@@ -20,7 +20,8 @@ class ClassGeneratorServices {
                                           string $slugFrom = 'title', 
                                           string $fieldsTranslatables = '', 
                                           string $fieldsInfo = '[]',
-                                          string $searchable = ''
+                                          string $searchable = '',
+                                          string $relationships = '',
                                          )
     {
         $capitalizeName = ucfirst($name);
@@ -30,7 +31,8 @@ class ClassGeneratorServices {
                                          slugFrom: $slugFrom, 
                                          fieldsTranslatables: $fieldsTranslatables, 
                                          fieldsInfo: $fieldsInfo,
-                                         searchable: $searchable
+                                         searchable: $searchable,
+                                         relationships: $relationships
                                         );
 
         if(!is_dir($this->modelsPath.'/'.$this->folderName))
@@ -51,7 +53,8 @@ class ClassGeneratorServices {
                                        string $slugFrom = 'title', 
                                        string $fieldsTranslatables = '', 
                                        string $fieldsInfo = '',
-                                       string $searchable = ''
+                                       string $searchable = '',
+                                       string $relationships = ''
                                        )
     {
         $namespace = "App\Models\\".$this->folderName;
@@ -72,6 +75,7 @@ class ClassGeneratorServices {
             $bodyFromStubs = str_replace('{{ traits }}', '', $bodyFromStubs);
         }
         $bodyFromStubs = str_replace('{{ searchable }}', $searchable != '' ? $searchable : json_encode([]), $bodyFromStubs);
+        $bodyFromStubs = str_replace('{{ relationships }}', $relationships, $bodyFromStubs);
 
         return $bodyFromStubs;
     }

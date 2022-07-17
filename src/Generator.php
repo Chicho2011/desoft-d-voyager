@@ -5,6 +5,7 @@ namespace Desoft\DVoyager;
 use Desoft\DVoyager\Services\BreadGeneratorServices;
 use Desoft\DVoyager\Services\ClassGeneratorServices;
 use Desoft\DVoyager\Services\MigrationGeneratorServices;
+use Desoft\DVoyager\Services\RelationshipGeneratorServices;
 use Desoft\DVoyager\Utils\GeneratorUtilities;
 use Desoft\DVoyager\Utils\Utilities;
 use Illuminate\Support\Facades\Artisan;
@@ -18,7 +19,8 @@ class Generator {
     public function __construct(
         private ClassGeneratorServices $classGeneratorServices,
         private MigrationGeneratorServices $migrationGeneratorServices,
-        private BreadGeneratorServices $breadGeneratorServices
+        private BreadGeneratorServices $breadGeneratorServices,
+        private RelationshipGeneratorServices $relationshipGeneratorServices
     )
     {
         $this->breads = config('dvoyager.breads');
@@ -54,7 +56,8 @@ class Generator {
                 slugFrom: array_key_exists('slugFrom', $value) ? $value['slugFrom'] : 'title', 
                 fieldsTranslatables: array_key_exists('fieldsTranslatable', $value) ? json_encode($value['fieldsTranslatable']) : '',
                 fieldsInfo: json_encode($info),
-                searchable: isset($value['searchable']) ? json_encode($value['searchable']) : ''
+                searchable: isset($value['searchable']) ? json_encode($value['searchable']) : '',
+                relationships: isset($value['relationships']) ? $this->relationshipGeneratorServices->joinModelRelationships($value['relationships']) : ''
             );
         }
     }
@@ -63,7 +66,7 @@ class Generator {
     {
         foreach ($this->breads as $key => $value) {
             $fields = $value['fields'];
-            $this->migrationGeneratorServices->generateDVoyagerMigration($value['table'], $fields);
+            $this->migrationGeneratorServices->generateDVoyagerMigration($value['table'], $fields, isset($value['relationships']) ? $value['relationships'] : []);
         }
     }
 
