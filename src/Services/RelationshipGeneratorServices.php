@@ -9,9 +9,9 @@ class RelationshipGeneratorServices {
         $text = '';
         foreach ($relationshipArray as $key => $value) {
             $keyExploded = explode('_', $key);
-            $name = count($keyExploded) > 1 ? $keyExploded[0] : $key;
+            $name = count($keyExploded) > 1 ? snakeToCamel($key) : $key;
             $relationshipType = $value['relationType'];
-            $model = $this->generateClassPath($value['model']);
+            $model = $this->generateClassPath($value['relationModel']);
             $relatedField = $value['referenceField'];
             $fieldToUse = $key;
 

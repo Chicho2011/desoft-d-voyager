@@ -49,6 +49,7 @@ class Generator {
     {
         foreach ($this->breads as $key => $value) {
             $info = $value['info'] ?? [];
+            $relations = $this->searchForRelationships($value['fields']);
             //TODO Revisar el tema de los translatables
             $this->classGeneratorServices->generateDVoyagerClass(
                 name: $key, 
@@ -57,16 +58,24 @@ class Generator {
                 fieldsTranslatables: array_key_exists('fieldsTranslatable', $value) ? json_encode($value['fieldsTranslatable']) : '',
                 fieldsInfo: json_encode($info),
                 searchable: isset($value['searchable']) ? json_encode($value['searchable']) : '',
-                relationships: isset($value['relationships']) ? $this->relationshipGeneratorServices->joinModelRelationships($value['relationships']) : ''
+                relationships: count($relations) > 1 ? $this->relationshipGeneratorServices->joinModelRelationships($relations) : ''
             );
         }
     }
 
     public function generateMigration()
     {
+        $migrationNumber = 0;
+
         foreach ($this->breads as $key => $value) {
             $fields = $value['fields'];
-            $this->migrationGeneratorServices->generateDVoyagerMigration($value['table'], $fields, isset($value['relationships']) ? $value['relationships'] : []);
+            $relations = $this->searchForRelationships($value['fields']);
+            $this->migrationGeneratorServices->generateDVoyagerMigration(
+                                                                            table: $value['table'], 
+                                                                            keyValueFields: $fields, 
+                                                                            relationships: count($relations) > 1 ? $relations : [], 
+                                                                            migrationNumber: $migrationNumber++
+                                                                        );
         }
     }
 
@@ -99,6 +108,19 @@ class Generator {
             GeneratorUtilities::createFile(base_path('config/voyager.php'), $replacedVoyagerPath);
             Artisan::call('config:cache');
         }
+    }
+
+    private function searchForRelationships($fields)
+    {
+        $relations = [];
+        foreach ($fields as $key => $value) {
+            if($value['type'] == 'relation')
+            {
+                $relations = array_merge($relations, [$key => $value]);
+            }
+        }
+
+        return $relations;
     }
 
 }

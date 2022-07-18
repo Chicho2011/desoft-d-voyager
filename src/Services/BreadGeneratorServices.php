@@ -63,11 +63,25 @@ class BreadGeneratorServices {
 
         //DataRows
         foreach ($breadInfo['fields'] as $key => $value) {
+
+            $details = [];
+
             $requestedDataArray['field_required_'.$key] = !$value['isNullable'];
             $requestedDataArray['field_'.$key] = $key;
-            $requestedDataArray['field_input_type_'.$key] = $value['voyager_type'] ?? 'text';
-            $requestedDataArray['field_details_'.$key] = array_key_exists('validation', $value) ? $this->buildValidation($value['validation']) : '{}';
-            $requestedDataArray['field_display_name_'.$key] = $value['display_name'] ?? $key;
+            $requestedDataArray['field_input_type_'.$key] = $this->getVoyagerType($value);
+
+            if(array_key_exists('validation', $value))
+            {
+                $details = array_merge($details, $this->buildValidation($value['validation']));
+            }
+
+            if($value['type'] == 'relation')
+            {
+                $details = array_merge($details, $this->buildRelation($key, $value));
+            }
+
+            $requestedDataArray['field_details_'.$key] = json_encode($details);
+            $requestedDataArray['field_display_name_'.$key] = $value['displayName'] ?? $key;
             $requestedDataArray['field_order_'.$key] = $order++;
             $requestedDataArray['field_browse_'.$key] = true;
             $requestedDataArray['field_read_'.$key] = true;
@@ -96,12 +110,39 @@ class BreadGeneratorServices {
         return $requestedDataArray;
     }
 
-    public function buildValidation(array $validations)
+    private function buildValidation(array $validations)
     {
         if(!isset($validations['rule']))
             return '{}';
 
-        return json_encode(['validation' => $validations]);
+        return ['validation' => $validations];
+    }
+
+    private function buildRelation(string $fieldName, array $relationship)
+    {
+        $relationshipGeneratorServices = new RelationshipGeneratorServices;
+
+        $rel = [];
+        $rel['key'] = $relationship['referenceField'];
+        $rel['label'] = isset($relationship['fieldToSee']) ? $relationship['fieldToSee'] : 'id';
+        $rel['model'] = $relationshipGeneratorServices->generateClassPath($relationship['relationModel']);
+        $rel['type'] = $relationship['relationType'];
+        $rel['column'] = $fieldName;
+
+        return ['relationship' => $rel];
+    }
+
+    private function getVoyagerType($field)
+    {
+        if($field['type'] == 'relation')
+        {
+            if($field['relationType'] == 'belongsTo')
+            {
+                return 'select_dropdown';
+            }
+        }
+
+        return array_key_exists('voyager_type', $field) ? $field['voyager_type'] : 'text';
     }
 
 }

@@ -22,12 +22,12 @@ class MigrationGeneratorServices {
     /*
         $keyValueFields: Array (la llave pertenece al nombre del campo y el value el tipo)
     */
-    public function generateDVoyagerMigration(string $table, array $keyValueFields, array $relationships = [])
+    public function generateDVoyagerMigration(string $table, array $keyValueFields, array $relationships = [], int $migrationNumber = 0)
     {
         $carbonDate = Carbon::now();
 
         //Pasar por parametro el índice para mantener el orden de las migraciones
-        $date_text = $carbonDate->format('Y_m_d_his');
+        $date_text = $carbonDate->format('Y_m_d').'_'.$migrationNumber;
 
         $newMigrationPath = $this->migrationsPath.'/'.$this->folderName.'/'.$date_text.'_create_'.$table.'_table.php';
         $body = $this->generateBody(table: $table, keyValueFields: $keyValueFields, relationships: $relationships);
@@ -62,10 +62,13 @@ class MigrationGeneratorServices {
         }
 
         foreach ($keyValueFields as $key => $value) {
-            $type = $value['type'];
-            $isNullable = $value['isNullable'] ? '->nullable(true)' : '->nullable(false)';
-            $isUnique = $value['isUnique'] ? '->unique()': '';
-            $fieldsText .= "\$table->$type('$key')$isNullable$isUnique;\n";
+            if($value['type'] != 'relation')
+            {
+                $type = $value['type'];
+                $isNullable = $value['isNullable'] ? '->nullable(true)' : '->nullable(false)';
+                $isUnique = $value['isUnique'] ? '->unique()': '';
+                $fieldsText .= "\$table->$type('$key')$isNullable$isUnique;\n";
+            }
         }
 
         $fieldsText .= $this->generateMigrationLineFromRelationships($relationships);
@@ -86,10 +89,12 @@ class MigrationGeneratorServices {
         foreach ($relationShipArray as $key => $value) {
             $fieldName = $key;
             $fieldType = 'unsignedBigInteger';
-            $relatedTable = app($this->relationshipGeneratorServices->generateClassPath($value['model']))->getTable();
+            $isNullable = $value['isNullable'] ? '->nullable(true)' : '->nullable(false)';
+            $isUnique = $value['isUnique'] ? '->unique()': '';
+            $relatedTable = app($this->relationshipGeneratorServices->generateClassPath($value['relationModel']))->getTable();
             $relatedField = isset($value['referencesField']) ? $value['referencesField'] : 'id';
             $text .= "
-                    \$table->$fieldType('$fieldName');
+                    \$table->$fieldType('$fieldName')$isNullable$isUnique;
                     \$table->foreign('$fieldName')->references('$relatedField')->on('$relatedTable')->onDelete('CASCADE');
                     ";
         }

@@ -29,3 +29,11 @@ if (! function_exists('act_date')) {
 
     }
 }
+
+if(!function_exists('snakeToCamel'))
+{
+    function snakeToCamel($input)
+    {
+        return lcfirst(str_replace(' ', '', ucwords(str_replace('_', ' ', $input))));
+    }
+}
