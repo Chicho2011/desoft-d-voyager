@@ -31,6 +31,7 @@ class Generator {
 
     public function install()
     {
+        $this->executeClearConfigCache();
         $this->executeCommonMigrateCommand();
         $this->generateClass();
         $this->generateMigration();
@@ -41,6 +42,7 @@ class Generator {
 
     public function minimumInstall()
     {
+        $this->executeClearConfigCache();
         $this->executeCommonMigrateCommand();
         $this->changeVoyagerControllers();
     }
@@ -58,7 +60,8 @@ class Generator {
                 fieldsTranslatables: array_key_exists('fieldsTranslatable', $value) ? json_encode($value['fieldsTranslatable']) : '',
                 fieldsInfo: json_encode($info),
                 searchable: isset($value['searchable']) ? json_encode($value['searchable']) : '',
-                relationships: count($relations) > 1 ? $this->relationshipGeneratorServices->joinModelRelationships($relations) : ''
+                relationships: count($relations) > 1 ? $this->relationshipGeneratorServices->joinModelRelationships($relations) : '',
+                maxRecords: array_key_exists('maxRecords', $value) ? $value['maxRecords'] : -1
             );
         }
     }
@@ -96,6 +99,11 @@ class Generator {
     public function executeCommonMigrateCommand()
     {
         Artisan::call('migrate');
+    }
+
+    public function executeClearConfigCache()
+    {
+        Artisan::call('config:cache');
     }
 
     public function changeVoyagerControllers()

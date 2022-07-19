@@ -22,6 +22,7 @@ class ClassGeneratorServices {
                                           string $fieldsInfo = '[]',
                                           string $searchable = '',
                                           string $relationships = '',
+                                          int $maxRecords = -1
                                          )
     {
         $capitalizeName = ucfirst($name);
@@ -32,7 +33,8 @@ class ClassGeneratorServices {
                                          fieldsTranslatables: $fieldsTranslatables, 
                                          fieldsInfo: $fieldsInfo,
                                          searchable: $searchable,
-                                         relationships: $relationships
+                                         relationships: $relationships,
+                                         maxRecords: $maxRecords
                                         );
 
         if(!is_dir($this->modelsPath.'/'.$this->folderName))
@@ -54,7 +56,8 @@ class ClassGeneratorServices {
                                        string $fieldsTranslatables = '', 
                                        string $fieldsInfo = '',
                                        string $searchable = '',
-                                       string $relationships = ''
+                                       string $relationships = '',
+                                       int $maxRecords = -1
                                        )
     {
         $namespace = "App\Models\\".$this->folderName;
@@ -66,6 +69,7 @@ class ClassGeneratorServices {
         $bodyFromStubs = str_replace('{{ table }}', $table, $bodyFromStubs);
         $bodyFromStubs = str_replace('{{ slugFrom }}', $slugFrom, $bodyFromStubs);
         $bodyFromStubs = str_replace('{{ translatable }}', $fieldsTranslatables != '' ? $fieldsTranslatables : json_encode([]), $bodyFromStubs);
+        $bodyFromStubs = str_replace('{{ maxRecords }}', $maxRecords, $bodyFromStubs);
         $bodyFromStubs = str_replace('{{ fieldsInfo }}', $fieldsInfo, $bodyFromStubs);
         if($searchable != '')
         {

@@ -11,6 +11,7 @@ class {{ className }} extends DVoyagerModel {
     protected $table = '{{ table }}';
     protected $slugFrom = '{{ slugFrom }}';
     protected $translatable = {{ translatable }};
+    public $maxRecords = {{ maxRecords }};
     protected $fieldsInfo = '{{ fieldsInfo }}';
     protected $searchable = {{ searchable }};
 

@@ -4,6 +4,7 @@ namespace Desoft\DVoyager\Services;
 
 use Desoft\DVoyager\Utils\Utilities;
 use Exception;
+use Illuminate\Support\Str;
 use TCG\Voyager\Events\BreadAdded;
 use TCG\Voyager\Facades\Voyager;
 use TCG\Voyager\Models\DataType;
@@ -31,7 +32,7 @@ class BreadGeneratorServices {
         $requestedDataArray['name'] = $breadInfo['table'];
         $requestedDataArray['display_name_singular'] = ucfirst($breadInfo['single_name'] ?? $modelName);
         $requestedDataArray['display_name_plural'] = ucfirst($breadInfo['plural_name'] ?? $breadInfo['table']);
-        $requestedDataArray['slug'] = strtolower(ucfirst($breadInfo['plural_name'] ?? $breadInfo['table']));
+        $requestedDataArray['slug'] = Str::slug($breadInfo['plural_name'] ?? $breadInfo['table'], '-');
         $requestedDataArray['icon'] = null;
         $requestedDataArray['model_name'] = Utilities::generateClassNamespace($modelName);
         $requestedDataArray['controller'] = null;

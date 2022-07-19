@@ -6,6 +6,7 @@ use Desoft\DVoyager\Commands\InstallCommand;
 use Desoft\DVoyager\Commands\MinInstallCommand;
 use Desoft\DVoyager\Providers\DVoyagerEventServiceProvider;
 use Desoft\DVoyager\Rules\CustomUrlRule;
+use Desoft\DVoyager\Rules\DimensionsValidationRule;
 use Desoft\DVoyager\Rules\ValidationNameRule;
 use Desoft\DVoyager\Rules\ValidationPhoneRule;
 use Illuminate\Support\Facades\Validator;
@@ -80,6 +81,20 @@ class DVoyagerServiceProvider extends ServiceProvider
 
             return $customRule->passes($attribute, $value);
         });
+        Validator::extend('dimensions_validation', function($attribute,
+                                                                   $value,
+                                                                   $parameters,
+                                                                   $validator)
+            {
+                $dimensions = $parameters;
+                $cdv = new DimensionsValidationRule($dimensions[0], $dimensions[1], $value->getClientOriginalName());
+                $validator->addReplacer('custom_dimensions_validation',
+                    function($message, $attribute, $rule, $parameters) use ($cdv) {
+                        return $cdv->message();
+                    }
+                );
+                return $cdv->passes($attribute, $value);
+            });
     }
 
     private function loadHelpers()

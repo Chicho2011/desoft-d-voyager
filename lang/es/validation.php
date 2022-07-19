@@ -2,6 +2,7 @@
 
 return [
     'custom_url'           => 'Por favor, escribe una URL válida. Ejemplo: http o https://servidor o una dirección ip válida https://xxx.xxx.xxx.xxx',
+    'records_limit'  => 'Solo se permiten :max registros',
     'text_not_in_password'   => 'La contraseña no puede contener el nombre de usuario',
     'validation_name'      => 'El campo :attribute solo admite letras y caracteres especiales',
     'validation_phone' => 'El campo :attribute debe tener la siguiente estructura: +:country_code:phone_length.',
