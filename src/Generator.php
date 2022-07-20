@@ -8,7 +8,6 @@ use Desoft\DVoyager\Services\ClassGeneratorServices;
 use Desoft\DVoyager\Services\MigrationGeneratorServices;
 use Desoft\DVoyager\Services\RelationshipGeneratorServices;
 use Desoft\DVoyager\Utils\GeneratorUtilities;
-use Desoft\DVoyager\Utils\Utilities;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -188,7 +187,7 @@ class Generator {
 
     public function rollbackGeneration()
     {
-        $history = DVoyagerGenerationHistory::latest()->get();
+        $history = DVoyagerGenerationHistory::orderBy('id', 'desc')->get();
         foreach ($history as $value) {
             $this->rollbackBreads($value->table);
             $this->rollbackMigrations($value->migration, $value->table);

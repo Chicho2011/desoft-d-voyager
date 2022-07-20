@@ -7,6 +7,11 @@
             "Desoft\\DVoyager\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+          "Desoft\\DVoyager\\Tests\\": "tests"
+        }
+    },
     "authors": [
         {
             "name": "Ernesto Alvarez",
@@ -22,5 +27,8 @@
                 "Desoft\\DVoyager\\DVoyagerServiceProvider"
             ]
         }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
     }
 }

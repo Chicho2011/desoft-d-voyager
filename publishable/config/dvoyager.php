@@ -19,6 +19,13 @@
                 'displayName' => nombre que se muestra del campo en los BREADs. - string,
                 'isNullable' => Si es requerido - boolean,
                 'isUnique' => Si es único - boolean,
+                'permissions' => [
+                    'browse' => Si el campo se muestra en el listar. Opcional. Si no se incluye se pone true. - boolean,
+                    'read' => Si el campo se muestra en el detalles. Opcional. Si no se incluye se pone true. - boolean,
+                    'edit' => Si el campo se muestra en el editar. Opcional. Si no se incluye se pone true. - boolean,
+                    'add' => Si el campo se muestra en el adicionar. Opcional. Si no se incluye se pone true. - boolean,
+                    'delete' => Si el campo se muestra en el eliminar. Opcional. Si no se incluye se pone true. - boolean,
+                ]
                 'validation' => [
                     'rule' => validaciones en formato: 'required|max:20' - string
                 ],

@@ -33,7 +33,7 @@ class BreadGeneratorServices {
         $requestedDataArray['display_name_singular'] = ucfirst($breadInfo['single_name'] ?? $modelName);
         $requestedDataArray['display_name_plural'] = ucfirst($breadInfo['plural_name'] ?? $breadInfo['table']);
         $requestedDataArray['slug'] = Str::slug($breadInfo['plural_name'] ?? $breadInfo['table'], '-');
-        $requestedDataArray['icon'] = null;
+        $requestedDataArray['icon'] = isset($breadInfo['voyagerIcon']) ? $breadInfo['voyagerIcon'] : 'voyager-dot';
         $requestedDataArray['model_name'] = Utilities::generateClassNamespace($modelName);
         $requestedDataArray['controller'] = null;
         $requestedDataArray['policy_name'] = null;
@@ -84,11 +84,16 @@ class BreadGeneratorServices {
             $requestedDataArray['field_details_'.$key] = json_encode($details);
             $requestedDataArray['field_display_name_'.$key] = $value['displayName'] ?? $key;
             $requestedDataArray['field_order_'.$key] = $order++;
-            $requestedDataArray['field_browse_'.$key] = true;
-            $requestedDataArray['field_read_'.$key] = true;
-            $requestedDataArray['field_edit_'.$key] = true;
-            $requestedDataArray['field_add_'.$key] = true;
-            $requestedDataArray['field_delete_'.$key] = true;
+            if($this->getPermission($value, 'browse'))
+                $requestedDataArray['field_browse_'.$key] = true;
+            if($this->getPermission($value, 'read'))
+                $requestedDataArray['field_read_'.$key] = true;
+            if($this->getPermission($value, 'edit'))
+                $requestedDataArray['field_edit_'.$key] = true;
+            if($this->getPermission($value, 'add'))
+                $requestedDataArray['field_add_'.$key] = true;
+            if($this->getPermission($value, 'delete'))
+                $requestedDataArray['field_delete_'.$key] = true;
         }
 
         //Add created_at data
@@ -144,6 +149,22 @@ class BreadGeneratorServices {
         }
 
         return array_key_exists('voyager_type', $field) ? $field['voyager_type'] : 'text';
+    }
+
+    public function getPermission(array $fieldInfo, string $permission)
+    {
+        if(!in_array($permission, ['browse', 'add', 'edit', 'delete', 'read']))
+        {
+            return true;   
+        }
+
+        if(isset($fieldInfo['permissions']))
+        {
+            $permissions = $fieldInfo['permissions'];
+            return array_key_exists($permission, $permissions) ? $permissions[$permission] : true;
+        }
+
+        return true;
     }
 
 }
