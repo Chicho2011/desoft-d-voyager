@@ -4,6 +4,7 @@ namespace Desoft\DVoyager;
 
 use Desoft\DVoyager\Commands\InstallCommand;
 use Desoft\DVoyager\Commands\MinInstallCommand;
+use Desoft\DVoyager\Commands\RollbackCommand;
 use Desoft\DVoyager\Providers\DVoyagerEventServiceProvider;
 use Desoft\DVoyager\Rules\CustomUrlRule;
 use Desoft\DVoyager\Rules\DimensionsValidationRule;
@@ -31,7 +32,8 @@ class DVoyagerServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 InstallCommand::class,
-                MinInstallCommand::class
+                MinInstallCommand::class,
+                RollbackCommand::class
             ]);
         }
 

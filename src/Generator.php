@@ -2,6 +2,7 @@
 
 namespace Desoft\DVoyager;
 
+use Desoft\DVoyager\Models\DVoyagerGenerationHistory;
 use Desoft\DVoyager\Services\BreadGeneratorServices;
 use Desoft\DVoyager\Services\ClassGeneratorServices;
 use Desoft\DVoyager\Services\MigrationGeneratorServices;
@@ -9,6 +10,11 @@ use Desoft\DVoyager\Services\RelationshipGeneratorServices;
 use Desoft\DVoyager\Utils\GeneratorUtilities;
 use Desoft\DVoyager\Utils\Utilities;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use TCG\Voyager\Events\BreadDeleted;
+use TCG\Voyager\Facades\Voyager;
+use TCG\Voyager\Models\DataType;
 
 class Generator {
 
@@ -33,10 +39,7 @@ class Generator {
     {
         $this->executeClearConfigCache();
         $this->executeCommonMigrateCommand();
-        $this->generateClass();
-        $this->generateMigration();
-        $this->executeMigrateCommand();
-        $this->generateBreads();
+        $this->generate();
         $this->changeVoyagerControllers();
     }
 
@@ -45,6 +48,57 @@ class Generator {
         $this->executeClearConfigCache();
         $this->executeCommonMigrateCommand();
         $this->changeVoyagerControllers();
+    }
+
+    public function generate()
+    {
+        $migrationNumber = 0;
+        foreach ($this->breads as $key => $value) {
+            if(DVoyagerGenerationHistory::where('bread', $key)->first() == null)            
+            {
+                /*
+                    Generar Clase
+                */
+                $info = $value['info'] ?? [];
+                $relations = $this->searchForRelationships($value['fields']);
+                //TODO Revisar el tema de los translatables
+                $className = $this->classGeneratorServices->generateDVoyagerClass(
+                    name: $key, 
+                    table: $value['table'], 
+                    slugFrom: array_key_exists('slugFrom', $value) ? $value['slugFrom'] : 'title', 
+                    fieldsTranslatables: array_key_exists('fieldsTranslatable', $value) ? json_encode($value['fieldsTranslatable']) : '',
+                    fieldsInfo: json_encode($info),
+                    searchable: isset($value['searchable']) ? json_encode($value['searchable']) : '',
+                    relationships: count($relations) > 1 ? $this->relationshipGeneratorServices->joinModelRelationships($relations) : '',
+                    maxRecords: array_key_exists('maxRecords', $value) ? $value['maxRecords'] : -1
+                );
+
+                /* 
+                    Generar Migraciones
+                */
+                $fields = $value['fields'];
+                $relations = $this->searchForRelationships($value['fields']);
+                $migrationName = $this->migrationGeneratorServices->generateDVoyagerMigration(
+                                                                                table: $value['table'], 
+                                                                                keyValueFields: $fields, 
+                                                                                relationships: count($relations) > 1 ? $relations : [], 
+                                                                                migrationNumber: $migrationNumber++
+                                                                            );
+                $this->executeMigrateCommand();
+                
+                /*
+                    Generar Breads
+                */
+                $this->breadGeneratorServices->createBread($value, $key);
+
+                DVoyagerGenerationHistory::create([
+                    'bread' => $key,
+                    'table' => $value['table'],
+                    'migration' => $migrationName,
+                    'model' => $className
+                ]);
+            }
+        }
     }
 
     public function generateClass()
@@ -63,6 +117,7 @@ class Generator {
                 relationships: count($relations) > 1 ? $this->relationshipGeneratorServices->joinModelRelationships($relations) : '',
                 maxRecords: array_key_exists('maxRecords', $value) ? $value['maxRecords'] : -1
             );
+
         }
     }
 
@@ -129,6 +184,56 @@ class Generator {
         }
 
         return $relations;
+    }
+
+    public function rollbackGeneration()
+    {
+        $history = DVoyagerGenerationHistory::latest()->get();
+        foreach ($history as $value) {
+            $this->rollbackBreads($value->table);
+            $this->rollbackMigrations($value->migration, $value->table);
+            $this->rollbackModels($value->model);
+
+            $value->delete();
+        }
+    }
+
+    public function rollbackModels($modelName)
+    {
+        $modelsPath = config('dvoyager.modelsPath', app_path('Models/DVoyager'));
+        unlink($modelsPath.'/'.$modelName);
+    }
+
+    public function rollbackMigrations($migrationName, $table)
+    {
+        $migrationsPath = config('dvoyager.migrationsPath', base_path('database/migrations/DVoyager'));
+        $migrationToDeletePath = $migrationsPath.'/'.$migrationName;
+        if(file_exists($migrationToDeletePath))
+        {
+            unlink($migrationToDeletePath);
+        }
+
+        DB::table('migrations')->where('migration', str_replace('.php','',$migrationName))->delete();
+
+        Schema::dropIfExists($table);
+    }
+
+    public function rollbackBreads($table)
+    {
+        $dataType = DataType::where('name', $table)->first();
+
+        if($dataType != null)
+        {
+            if (is_bread_translatable($dataType)) {
+                $dataType->deleteAttributeTranslations($dataType->getTranslatableAttributes());
+            }
+
+            $res = Voyager::model('DataType')->destroy($dataType->id);
+
+            event(new BreadDeleted($dataType, ''));
+
+            Voyager::model('Permission')->removeFrom($dataType->name);
+        }
     }
 
 }

@@ -26,7 +26,8 @@ class ClassGeneratorServices {
                                          )
     {
         $capitalizeName = ucfirst($name);
-        $newClassPath = $this->modelsPath.'/'.$this->folderName.'/'.$capitalizeName.'DVoyagerModel.php';
+        $className = $capitalizeName.'DVoyagerModel.php';
+        $newClassPath = $this->modelsPath.'/'.$this->folderName.'/'.$className;
         $body = $this->generateClassBody(capitalizeName: $capitalizeName.'DVoyagerModel', 
                                          table: $table, 
                                          slugFrom: $slugFrom, 
@@ -48,6 +49,7 @@ class ClassGeneratorServices {
         }
 
         GeneratorUtilities::createFile(path: $newClassPath, body: $body);
+        return $className;
     }
 
     private function generateClassBody(string $capitalizeName, 

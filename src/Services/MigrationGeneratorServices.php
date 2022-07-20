@@ -29,7 +29,9 @@ class MigrationGeneratorServices {
         //Pasar por parametro el índice para mantener el orden de las migraciones
         $date_text = $carbonDate->format('Y_m_d').'_'.$migrationNumber;
 
-        $newMigrationPath = $this->migrationsPath.'/'.$this->folderName.'/'.$date_text.'_create_'.$table.'_table.php';
+        $migrationName = $date_text.'_create_'.$table.'_table.php';
+
+        $newMigrationPath = $this->migrationsPath.'/'.$this->folderName.'/'.$migrationName;
         $body = $this->generateBody(table: $table, keyValueFields: $keyValueFields, relationships: $relationships);
 
         if(!is_dir($this->migrationsPath.'/'.$this->folderName))
@@ -43,6 +45,8 @@ class MigrationGeneratorServices {
         }
 
         GeneratorUtilities::createFile(path: $newMigrationPath, body: $body);
+
+        return $migrationName;
     }
 
     private function generateBody(string $table, array $keyValueFields, array $relationships = [])
