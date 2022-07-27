@@ -27,6 +27,7 @@
                 <div class="panel panel-bordered">
                     <!-- form start -->
                     <form role="form"
+                            novalidate
                             class="form-edit-add"
                             action="{{ $edit ? route('voyager.'.$dataType->slug.'.update', $dataTypeContent->getKey()) : route('voyager.'.$dataType->slug.'.store') }}"
                             method="POST" enctype="multipart/form-data">
