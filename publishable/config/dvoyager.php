@@ -2,7 +2,7 @@
 /*
     Opciones para los breads
     'nombreEnCamelCaseDelRecurso' => [
-        'type' => Tipo del campo en la Base de Datos - string,
+        'table' => Nombre de la tabla - string
         'slugFrom' => Campo a partir se forma el slug. Tiene que existir el campo. - string
         'single_name' => Nombre en singular que se muestra en los BREADs - string,
         'plural_name' => Nombre en plural que se muestra en los BREADs - string,
