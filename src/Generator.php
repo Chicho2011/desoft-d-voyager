@@ -68,7 +68,7 @@ class Generator {
                     fieldsTranslatables: array_key_exists('fieldsTranslatable', $value) ? json_encode($value['fieldsTranslatable']) : '',
                     fieldsInfo: json_encode($info),
                     searchable: isset($value['searchable']) ? json_encode($value['searchable']) : '',
-                    relationships: count($relations) > 1 ? $this->relationshipGeneratorServices->joinModelRelationships($relations) : '',
+                    relationships: count($relations) > 0 ? $this->relationshipGeneratorServices->joinModelRelationships($relations) : '',
                     maxRecords: array_key_exists('maxRecords', $value) ? $value['maxRecords'] : -1
                 );
 
@@ -80,7 +80,7 @@ class Generator {
                 $migrationName = $this->migrationGeneratorServices->generateDVoyagerMigration(
                                                                                 table: $value['table'], 
                                                                                 keyValueFields: $fields, 
-                                                                                relationships: count($relations) > 1 ? $relations : [], 
+                                                                                relationships: count($relations) > 0 ? $relations : [], 
                                                                                 migrationNumber: $migrationNumber++
                                                                             );
                 $this->executeMigrateCommand();
