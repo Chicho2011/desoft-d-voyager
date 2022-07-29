@@ -315,6 +315,10 @@ class VoyagerBaseController extends BaseController
         if (view()->exists("dvoyager::$slug.browse")) {
             $view = "dvoyager::$slug.browse";
         }
+        elseif(view()->exists("voyager::$slug.browse"))
+        {
+            $view = "voyager::$slug.browse";
+        }
 
         return Voyager::view($view, compact(
             'actions',
